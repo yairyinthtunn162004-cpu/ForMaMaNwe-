@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flores Amarillas para Ti 🌻</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-align: center;
+        }
+        #intro {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            transition: opacity 1s ease;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+        }
+        h1 {
+            font-size: 1.6rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+        p {
+            font-size: 0.95rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #ffd700;
+            color: #000;
+            border: none;
+            padding: 12px 26px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro">
+        <h1>Flores Amarillas para Ti</h1>
+        <p>Feliz día de las Flores Amarillas 🌻</p>
+        <button onclick="startExperience()">Abrir Universo 🌻</button>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function startExperience() {
+            document.getElementById('intro').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('canvas-container').style.display = 'block';
+                initGalaxy();
+            }, 1000);
+        }
+
+        function initGalaxy() {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // အဝါရောင် ဂယ်လက်ဆီ စက်ဝိုင်းပုံစံ အစက်များ ဖန်တီးခြင်း
+            const particlesCount = 7000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particlesCount * 3);
+            const colors = new Float32Array(particlesCount * 3);
+
+            const colorYellow = new THREE.Color(0xffd700);
+            const colorWhite = new THREE.Color(0xffffff);
+
+            for (let i = 0; i < particlesCount; i++) {
+                const radius = Math.random() * 20 + 2;
+                const spinAngle = radius * 0.5;
+                const branchAngle = ((i % 3) * 2 * Math.PI) / 3;
+
+                const angle = branchAngle + spinAngle;
+
+                const x = Math.cos(angle) * radius + (Math.random() - 0.5) * 2;
+                const y = (Math.random() - 0.5) * 3;
+                const z = Math.sin(angle) * radius + (Math.random() - 0.5) * 2;
+
+                positions[i * 3] = x;
+                positions[i * 3 + 1] = y;
+                positions[i * 3 + 2] = z;
+
+                colors[i * 3] = colorYellow.r;
+                colors[i * 3 + 1] = colorYellow.g;
+                colors[i * 3 + 2] = colorYellow.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            const galaxyParticles = new THREE.Points(geometry, material);
+            scene.add(galaxyParticles);
+
+            camera.position.set(0, 15, 25);
+            camera.lookAt(0, 0, 0);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                galaxyParticles.rotation.y += 0.002;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+    </script>
+</body>
+</html>
