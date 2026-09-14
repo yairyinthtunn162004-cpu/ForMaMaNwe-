@@ -3,191 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flores Amarillas para Ti 🌻</title>
+    <title>Flores Amarillas 🌻</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            color: #fff;
-            text-align: center;
-        }
-        #intro {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            width: 85%;
-            max-width: 400px;
-            padding: 30px;
-            background: rgba(20, 15, 0, 0.9);
-            border: 2px solid #ffd700;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-            transition: opacity 1s ease;
-        }
-        h1 {
-            font-size: 1.6rem;
-            color: #ffd700;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-        }
-        p {
-            font-size: 1rem;
-            color: #eee;
-            margin-bottom: 25px;
-        }
-        button {
-            background-color: #ffd700;
-            color: #000;
-            border: none;
-            padding: 14px 30px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
-        }
-        #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-        }
-        .floating-text {
-            position: absolute;
-            color: #ffd700;
-            font-size: 14px;
-            font-weight: bold;
-            pointer-events: none;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-            white-space: nowrap;
-            animation: floatUp 6s linear infinite;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
-        }
+        body { margin: 0; background: #000; overflow: hidden; color: #ffd700; text-align: center; font-family: sans-serif; }
+        #box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; }
+        button { background: #ffd700; color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 30px; cursor: pointer; }
+        #webgl { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     </style>
 </head>
 <body>
-
-    <div id="intro">
+    <div id="box">
         <h1>Feliz día de las Flores Amarillas 🌻</h1>
-        <p>Una galaxia llena de amor para ti</p>
-        <button onclick="startExperience()">Abrir Universo ❤️</button>
+        <br>
+        <button onclick="go()">နှိပ်ပါ ❤️</button>
     </div>
-
-    <div id="canvas-container"></div>
-
-    <!-- ပတ်လည်မှာ ပေါ်မည့် စာသားလေးများ -->
-    <div id="text-overlay"></div>
+    <div id="webgl"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        const messages = [
-            "Flores para ti 🌻", "Mi flor favorita ❤️", "Eres luz en mi vida ✨", 
-            "Siempre brillতার 💛", "Un detalle amarillo 🌻", "Feliz día ✨", "Te amo ❤️"
-        ];
+        function go() {
+            document.getElementById('box').style.display = 'none';
+            document.getElementById('webgl').style.display = 'block';
 
-        function startExperience() {
-            document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('intro').style.display = 'none';
-                document.getElementById('canvas-container').style.display = 'block';
-                initGalaxy();
-                startFloatingTexts();
-            }, 1000);
-        }
-
-        function initGalaxy() {
-            const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
-            
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            container.appendChild(renderer.domElement);
+            document.getElementById('webgl').appendChild(renderer.domElement);
 
-            const particlesCount = 8000;
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particlesCount * 3);
-            const colors = new Float32Array(particlesCount * 3);
+            const count = 5000;
+            const geom = new THREE.BufferGeometry();
+            const pos = new Float32Array(count * 3);
 
-            const colorYellow = new THREE.Color(0xffd700);
-            const colorOrange = new THREE.Color(0xffaa00);
-
-            for (let i = 0; i < particlesCount; i++) {
-                const radius = Math.random() * 22 + 1;
-                const spinAngle = radius * 0.4;
-                const branchAngle = ((i % 4) * 2 * Math.PI) / 4;
-                const angle = branchAngle + spinAngle;
-
-                const x = Math.cos(angle) * radius;
-                const y = (Math.random() - 0.5) * 2;
-                const z = Math.sin(angle) * radius;
-
-                positions[i * 3] = x;
-                positions[i * 3 + 1] = y;
-                positions[i * 3 + 2] = z;
-
-                colors[i * 3] = colorYellow.r;
-                colors[i * 3 + 1] = colorYellow.g;
-                colors[i * 3 + 2] = colorYellow.b;
+            for(let i=0; i<count*3; i+=3) {
+                const r = Math.random() * 15;
+                const theta = Math.random() * Math.PI * 2;
+                pos[i] = Math.cos(theta) * r;
+                pos[i+1] = (Math.random() - 0.5) * 2;
+                pos[i+2] = Math.sin(theta) * r;
             }
-
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
             
-            const material = new THREE.PointsMaterial({
-                size: 0.16,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.95
-            });
-
-            const galaxyParticles = new THREE.Points(geometry, material);
-            scene.add(galaxyParticles);
-
-            camera.position.set(0, 12, 22);
-            camera.lookAt(0, 0, 0);
+            const mat = new THREE.PointsMaterial({size: 0.15, color: 0xffd700});
+            const points = new THREE.Points(geom, mat);
+            scene.add(points);
+            camera.position.z = 20;
 
             function animate() {
                 requestAnimationFrame(animate);
-                galaxyParticles.rotation.y += 0.003;
+                points.rotation.y += 0.01;
                 renderer.render(scene, camera);
             }
             animate();
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        }
-
-        function startFloatingTexts() {
-            setInterval(() => {
-                const textDiv = document.createElement('div');
-                textDiv.className = 'floating-text';
-                textDiv.innerText = messages[Math.floor(Math.random() * messages.length)];
-                textDiv.style.left = Math.random() * 80 + 10 + 'vw';
-                textDiv.style.animationDuration = (Math.random() * 3 + 4) + 's';
-                document.body.appendChild(textDiv);
-
-                setTimeout(() => {
-                    textDiv.remove();
-                }, 6000);
-            }, 600);
         }
     </script>
 </body>
 </html>
+
