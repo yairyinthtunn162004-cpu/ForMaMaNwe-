@@ -61,10 +61,28 @@
             height: 100%;
             display: none;
         }
+        /* အလယ်က ကြီးမားတဲ့ ပန်းပွင့်ပုံစံ */
+        #center-flower {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            z-index: 2;
+            display: none;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+            text-shadow: 0 0 20px #ffd700;
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
         .floating-text {
             position: absolute;
             color: #ffd700;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             pointer-events: none;
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
@@ -86,10 +104,9 @@
         <button onclick="startExperience()">Abrir Universo ❤️</button>
     </div>
 
-    <div id="canvas-container"></div>
+    <div id="center-flower">🌻</div>
 
-    <!-- ပတ်လည်မှာ ပေါ်မည့် စာသားလေးများ -->
-    <div id="text-overlay"></div>
+    <div id="canvas-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -102,6 +119,7 @@
             document.getElementById('intro').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('intro').style.display = 'none';
+                document.getElementById('center-flower').style.display = 'block';
                 document.getElementById('canvas-container').style.display = 'block';
                 initGalaxy();
                 startFloatingTexts();
@@ -117,22 +135,21 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             container.appendChild(renderer.domElement);
 
-            const particlesCount = 8000;
+            const particlesCount = 9000;
             const geometry = new THREE.BufferGeometry();
             const positions = new Float32Array(particlesCount * 3);
             const colors = new Float32Array(particlesCount * 3);
 
             const colorYellow = new THREE.Color(0xffd700);
-            const colorOrange = new THREE.Color(0xffaa00);
 
             for (let i = 0; i < particlesCount; i++) {
-                const radius = Math.random() * 22 + 1;
+                const radius = Math.random() * 25 + 2;
                 const spinAngle = radius * 0.4;
                 const branchAngle = ((i % 4) * 2 * Math.PI) / 4;
                 const angle = branchAngle + spinAngle;
 
                 const x = Math.cos(angle) * radius;
-                const y = (Math.random() - 0.5) * 2;
+                const y = (Math.random() - 0.5) * 3;
                 const z = Math.sin(angle) * radius;
 
                 positions[i * 3] = x;
@@ -148,16 +165,16 @@
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             
             const material = new THREE.PointsMaterial({
-                size: 0.16,
+                size: 0.15,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.95
+                opacity: 0.9
             });
 
             const galaxyParticles = new THREE.Points(geometry, material);
             scene.add(galaxyParticles);
 
-            camera.position.set(0, 12, 22);
+            camera.position.set(0, 15, 25);
             camera.lookAt(0, 0, 0);
 
             function animate() {
@@ -186,8 +203,9 @@
                 setTimeout(() => {
                     textDiv.remove();
                 }, 6000);
-            }, 600);
+            }, 500);
         }
     </script>
 </body>
 </html>
+
